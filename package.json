@@ -19,5 +19,10 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha -R spec --compilers coffee:coffee-script ./tests/*_test.*"
+  },
+  "homepage": "campjs.com",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:timoxley/campjs.git"
   }
 }
