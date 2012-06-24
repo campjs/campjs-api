@@ -2,7 +2,7 @@
   "author": "Tim Oxley <secoif@gmail.com> (unit.io)",
   "name": "campjs",
   "description": "Public CampJS website",
-  "version": "0.0.0",
+  "version": "0.0.0-10",
   "dependencies": {
     "restify": "~1.4.2",
     "redis": "~0.7.2",
@@ -15,14 +15,16 @@
   },
   "optionalDependencies": {},
   "engines": {
-    "node": "*"
+    "node": "v0.6.x"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha -R spec --compilers coffee:coffee-script ./tests/*_test.*"
+    "test": "./node_modules/.bin/mocha -R spec --compilers coffee:coffee-script ./tests/*_test.*",
+    "start": "./bin/start"
   },
   "homepage": "campjs.com",
   "repository": {
     "type": "git",
     "url": "git@github.com:timoxley/campjs.git"
-  }
+  },
+  "subdomain": "campjs"
 }

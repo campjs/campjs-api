@@ -3,14 +3,23 @@ restify = require('restify')
 
 sanitize = require('validator').sanitize
 
-db = redis.createClient()
+if process.env['NODE_ENV'] == 'production'
+  port = process.env['REDIS_PORT']
+  host = process.env['REDIS_HOST']
+  db = redis.createClient(port, host)
+  db.auth process.env['REDIS_PASSWORD'], (err, status) ->
+    if (err || status != 'OK')
+      throw new Error(err)
+    console.info('Connected to redis!')
+else
+  console.info('connecting to local redis instance')
+  db = redis.createClient()
 
 app = restify.createServer()
 app.use restify.queryParser()
 app.use restify.bodyParser()
 app.use restify.acceptParser(app.acceptable)
 
-app.post '/register', (req, res) ->
 app.post '/register', (req, res, next) ->
   userDetails = sanitize(req.params?.details || '').xss().trim()
   if not userDetails?

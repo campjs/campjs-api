@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+require('coffee-script')
+var app = require('../index')
+
+app.listen(process.env['APP_PORT'] || 80)
