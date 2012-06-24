@@ -38,17 +38,6 @@ describe 'submitting user details to signup', ->
             assert.strictEqual(result, 1)
             done()
 
-  describe 'submitting twitter address', ->
-    it 'responds with 200 & adds member', (done) ->
-      twitter = 'secoif'
-      client.post '/register', {details: twitter}, (err, req, res, obj) ->
-        assert.ifError(err)
-        assert.strictEqual(res.statusCode, 200)
-        db.sismember 'twitters', twitter, (err, result) ->
-          assert.ifError(err)
-          assert.ok(result)
-          done()
-      
   describe 'submitting twitter address with leading @', ->
     it 'responds with 200 & adds member', (done) ->
       twitter = '@secoif'
@@ -59,25 +48,39 @@ describe 'submitting user details to signup', ->
           assert.ifError(err)
           done()
 
-  describe 'submitting no address', (done) ->
-    it 'responds with error code', (done) ->
-      client.post '/register', {details: ''}, (err, req, res, obj) ->
-        assert.ok(err)
-        assert.strictEqual(res.statusCode, new restify.MissingParameterError().statusCode)
-        done()
+  describe 'errors', ->
+    assertAllEmpty = (done) ->
+      db.scard 'emails', (err, result) ->
+        assert.ifError(err)
+        assert.strictEqual(result, 0)
+        db.scard 'twitters', (err, result) ->
+          assert.ifError(err)
+          assert.strictEqual(result, 0)
+          done()
 
-  describe 'submitting garbage', ->
-    it 'responds with error code', (done) ->
-      client.post '/register', {details: '!#$%^&*SDIUYVB'}, (err, req, res, obj) ->
-        assert.ok(err)
-        assert.strictEqual(res.statusCode, 409)
-        done()
-
-  describe 'submitting nothing', ->
-    it 'responds with error code', (done) ->
-      client.post '/register', {}, (err, req, res, obj) ->
-        assert.ok(err)
-        assert.strictEqual(res.statusCode, 409)
-        done()
+    describe 'submitting no address', ->
+      it 'responds with error code', (done) ->
+        client.post '/register', {details: ''}, (err, req, res, obj) ->
+          assert.ok(err)
+          assert.strictEqual(res.statusCode, new restify.MissingParameterError().statusCode)
+          assertAllEmpty(done)
+    describe 'submitting garbage', ->
+      it 'responds with error code', (done) ->
+        client.post '/register', {details: '!#$%^&*SDIUYVB'}, (err, req, res, obj) ->
+          assert.ok(err)
+          assert.strictEqual(res.statusCode, 409)
+          assertAllEmpty(done)
+    describe 'submitting somewhat sensible garbage', ->
+      it 'responds with error code', (done) ->
+        client.post '/register', {details: 'asdfghjk'}, (err, req, res, obj) ->
+          assert.ok(err)
+          assert.strictEqual(res.statusCode, 409)
+          assertAllEmpty(done)
+    describe 'submitting nothing', ->
+      it 'responds with error code', (done) ->
+        client.post '/register', {}, (err, req, res, obj) ->
+          assert.ok(err)
+          assert.strictEqual(res.statusCode, 409)
+          assertAllEmpty(done)
 
 
