@@ -3,6 +3,12 @@ restify = require('restify')
 
 sanitize = require('validator').sanitize
 
+boot = ->
+  db.select process.env['REDIS_DB'] || 0, (err, status) ->
+    if (err || status != 'OK')
+      throw new Error(err)
+    console.log('db selected')
+
 if process.env['NODE_ENV'] == 'production'
   port = process.env['REDIS_PORT']
   host = process.env['REDIS_HOST']
@@ -10,10 +16,13 @@ if process.env['NODE_ENV'] == 'production'
   db.auth process.env['REDIS_PASSWORD'], (err, status) ->
     if (err || status != 'OK')
       throw new Error(err)
-    console.info('Connected to redis!')
+      console.info('Connected to redis!')
+      boot()
 else
   console.info('connecting to local redis instance')
   db = redis.createClient()
+  boot()
+
 
 app = restify.createServer()
 app.use restify.queryParser()

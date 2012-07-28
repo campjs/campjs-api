@@ -7,12 +7,12 @@ describe 'submitting user details to signup', ->
   TEST_DB = 4
   client = undefined
   db = undefined
-  before () ->
+  before (done) ->
     client = restify.createJsonClient
       url: 'http://localhost:3333'
 
-    app.listen(3333)
     db = app.db
+    db.select(4, done)
   beforeEach (done) ->
     db.flushdb(done)
 
